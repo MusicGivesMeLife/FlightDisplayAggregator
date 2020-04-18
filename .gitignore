@@ -1,6 +1,8 @@
 # Custom Files
 Metar.txt
 Info.txt
+Metar.json
+Info.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
