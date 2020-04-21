@@ -1,14 +1,15 @@
+#!/usr/bin/env python
 import urllib3
 import json
 
 headers = {
     'Content-Type':'application/json',
-    'token':'yourapiidhere'
+    'token':'yourapikeyhere'
 }
 http = urllib3.PoolManager()
-request = http.request('GET', 'https://avwx.rest/api/station/kgfk', fields=headers)
-request2 = http.request('GET', 'https://avwx.rest/api/metar/kgfk', fields=headers)
-request3 = http.request('GET', 'https://avwx.rest/api/taf/kgfk', fields=headers)
+request = http.request('GET', 'https://avwx.rest/api/station/klns', fields=headers)
+request2 = http.request('GET', 'https://avwx.rest/api/metar/klns', fields=headers)
+request3 = http.request('GET', 'https://avwx.rest/api/taf/klns', fields=headers)
 
 with open('Info.json', 'wb') as outfile1:
     outfile1.write(request.data)

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>
+<title>Station Data</title>
+<style>
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 50%;
+}
+</style>
+</head>
+<body>
+<div class="row">
+<div class="column">
+<h3>Info:</h3>
+<p id="name"></p>
+<p>Wiki: <a id="wiki"></a></p>
+<p id="runways"></p>
+</div>
+<br>
+<div class="column">
+<h3>METAR:</h3>
+<p id="sane"></p>
+<p id="visible"></p>
+<p id="temp"></p>
+<p id="wind"></p>
+<p id="clouds"></p>
+<p id="weather"></p>
+</div>
+</div>
+
+<script>
+var xmlhttp = new XMLHttpRequest();
+var x = "";
+var run = 0;
+xmlhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    var klnsInfo = JSON.parse(this.responseText);
+    document.title = klnsInfo.name;
+    document.getElementById("name").innerHTML = "Station Name: " + klnsInfo.name + " - " + klnsInfo.icao;
+    document.getElementById("wiki").innerHTML = klnsInfo.wiki;
+    document.getElementById("wiki").href = klnsInfo.wiki;
+    for (i in klnsInfo.runways) {
+        run = 1 + parseInt(i);
+        x += "<h4>Runway " + run + ":</h4>Runway Length: " + klnsInfo.runways[i].length_ft + "ft<br>Runway Width: " + klnsInfo.runways[i].width_ft + "ft<br>Identity: " + klnsInfo.runways[i].ident1 + "-" + klnsInfo.runways[i].ident2;
+    };
+    document.getElementById("runways").innerHTML = x;
+  }
+};
+xmlhttp.open("GET", "Info.json", true);
+xmlhttp.send();
+var c = "";
+var w = "";
+var g = "";
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    var klnsMetar = JSON.parse(this.responseText);
+    document.getElementById("sane").innerHTML = "Metar: " + klnsMetar.sanitized;
+    document.getElementById("visible").innerHTML = "Visibility: " + klnsMetar.visibility.value + klnsMetar.units.visibility;
+    document.getElementById("temp").innerHTML = "Temperature: " + klnsMetar.temperature.value + klnsMetar.units.temperature;
+    if (klnsMetar.wind_gust != null) {
+        g = " with gusts up to " + klnsMetar.wind_gust.value + klnsMetar.units.wind_speed;
+    };
+    document.getElementById("wind").innerHTML = "Wind: " + klnsMetar.wind_speed.value + klnsMetar.units.wind_speed + " at " + klnsMetar.wind_direction.repr + g;
+    for (i in klnsMetar.clouds) {
+        c += "<br>" + klnsMetar.clouds[i].type + " at " + (parseInt(klnsMetar.clouds[i].altitude) * 100) + klnsMetar.units.altitude;
+    };
+    document.getElementById("clouds").innerHTML = "Cloud Cover:" + c;
+    for (i in klnsMetar.wx_codes) {
+        w += " " + klnsMetar.wx_codes[i].value;
+    };
+    document.getElementById("weather").innerHTML = "Weather:" + w;
+  }
+};
+xmlhttp.open("GET", "Metar.json", true);
+xmlhttp.send();
+</script>
+</body>
+</html>
